@@ -1,0 +1,106 @@
+ALGORITHM two_sets
+VAR
+    set1: ARRAY_OF INTEGER[];
+    set2: ARRAY_OF INTEGER[];
+    SUMS : STRUCT
+                SAMESUM : INTEGER;
+                DIFFSUM : INTEGER;
+            END_STRUCT
+BEGIN
+read(set1);
+read(set2);
+
+    FUNCTION duplicatefn(ARRAY_OF INTEGER[] a,ARRAY_OF INTEGER[] b) : INTEGER
+    VAR
+        
+        i,j,duplicateSum:INTEGER;
+
+    BEGIN
+        duplicateSum:=0;
+    FOR i FROM 0 TO a.length-1 DO
+        FOR j FROM 0 TO b.length-1 DO
+            IF (a[i]=b[j]) THEN
+                duplicateSum:= duplicateSum+a[i]
+            END_IF
+        END_FOR
+    END_FOR
+
+    FOR i FROM 0 TO b.length-1 DO
+        FOR j FROM 0 TO a.length-1 DO
+            IF (b[i]=a[j]) THEN
+                duplicateSum:= duplicateSum+b[i]
+            END_IF
+        END_FOR
+    END_FOR
+        RETURN duplicateSum ;
+    END
+
+    FUNCTION distinctfn(ARRAY_OF INTEGER[] a,ARRAY_OF INTEGER[] b) : INTEGER
+    VAR
+        a,b:ARRAY_OF INTEGER[];
+        i,j,distinctSum:INTEGER;
+        different:BOOLEAN;
+
+    BEGIN
+        distinctSum:=0;
+        different:=true;
+    FOR i FROM 0 TO a.length-1 DO
+        FOR j FROM 0 TO b.length-1 DO
+            IF (a[i]=b[j]) THEN
+                different:=false;
+            END_IF
+        END_FOR
+        IF (different) THEN
+            distinctSum:=distinctSum + a[i];
+        END_IF
+    END_FOR
+
+        different:=true;
+    FOR i FROM 0 TO b.length-1 DO
+        FOR j FROM 0 TO a.length-1 DO
+            IF (b[i]=a[j]) THEN
+                different:=false;
+            END_IF
+        END_FOR
+        IF (different) THEN
+            distinctSum:=distinctSum + b[i];
+        END_IF
+    END_FOR
+
+        RETURN distinctSum ;
+    END
+
+FUNCTION hashtab_sumfn(ARRAY_OF INTEGER[] a,ARRAY_OF INTEGER[] b) : SUMS
+VAR
+    set,anotherset:ARRAY_OF INTEGER[];
+    htab : HASH_TABLE<INTEGER,INTEGER>;
+    duplicateSum,distinctSum,i:INTEGER;
+    sum:SUMS;
+BEGIN
+    duplicateSum:=0;
+    distinctSum:=0;
+    set:=a+b;
+    FOR i FROM 0 TO set.length-1 DO
+    htab.insert(set[i],1);
+    anotherset:=set;
+    anotherset[i]:=NULL;
+        IF (anotherset.lookup(set[i])) THEN
+            htab.insert(set[i],2);
+        END_IF
+
+    IF (htab.get(0)=2) THEN
+        duplicateSum:=duplicateSum + 1;
+    ELSE_IF (htab.get(0)=1) THEN
+        distinctSum:=distinctSum + 1;
+    ELSE
+    END_IF
+    END_FOR
+sum.SAMESUM:=duplicateSum;
+sum.DIFFSUM:=distinctSum;
+    RETURN sum ;
+END
+write("Result: Sum of duplicate numbers equals: ", duplicatefn(set1,set2)," .Sum of distinct numbers equals: ",distinctfn(set1,set2)" .");
+write("Result: Sum of duplicate numbers equals: ", hashtab_sumfn(set1,set2).SAMESUM," .Sum of distinct numbers equals: ",hashtab_sumfn(set1,set2).DIFFSUM" .");
+
+write("********************* ALGORITHM STINKS TIMES INFINITY!!!! *********************");
+END
